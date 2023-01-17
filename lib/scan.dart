@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-class Start extends StatelessWidget {
+class Scan extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
