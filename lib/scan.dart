@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+/*import 'package:flutter/material.dart';
 
 class Scan extends StatelessWidget {
   @override
@@ -9,3 +9,4 @@ class Scan extends StatelessWidget {
     );
   }
 }
+*/

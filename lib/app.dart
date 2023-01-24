@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+/*import 'package:flutter/material.dart';
 import 'scan.dart';
 
 class App extends StatelessWidget {
@@ -7,3 +7,4 @@ class App extends StatelessWidget {
     return MaterialApp(home: Scan());
   }
 }
+*/
