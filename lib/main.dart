@@ -1,3 +1,5 @@
+// ignore_for_file: avoid_print, unnecessary_null_comparison
+
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_barcode_scanner/flutter_barcode_scanner.dart';
@@ -16,14 +18,15 @@ class MyApp extends StatefulWidget {
 class ScanScreen extends StatelessWidget {
   final Function() onScan;
 
-  ScanScreen({required this.onScan});
+  // ignore: use_key_in_widget_constructors
+  const ScanScreen({required this.onScan});
 
   @override
   Widget build(BuildContext context) {
     return Center(
       child: ElevatedButton(
         onPressed: onScan,
-        child: Text('Scan'),
+        child: const Text('Scan'),
       ),
     );
   }
@@ -99,7 +102,7 @@ class _MyAppState extends State<MyApp> {
               _selectedIndex = index;
             });
           },
-          items: <BottomNavigationBarItem>[
+          items: const <BottomNavigationBarItem>[
             BottomNavigationBarItem(
               icon: Icon(Icons.camera_alt),
               label: 'Scan',
