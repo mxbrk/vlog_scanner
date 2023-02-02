@@ -4,6 +4,7 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_barcode_scanner/flutter_barcode_scanner.dart';
 import 'package:file_picker/file_picker.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 void main() => runApp(const MyApp());
 
@@ -35,18 +36,37 @@ class ScanScreen extends StatelessWidget {
 class _MyAppState extends State<MyApp> {
   int _selectedIndex = 0;
   String _csvFilePath = "";
+
+  Future<void> _loadCsvFilePath() async {
+    final prefs = await SharedPreferences.getInstance();
+    setState(() {
+      _csvFilePath = prefs.getString('csvFilePath')!;
+    });
+  }
+
+  Future<void> _saveCsvFilePath(String path) async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setString('csvFilePath', path);
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    _loadCsvFilePath();
+  }
+
   final List<Map<String, String>> _scannedBarcodes = [];
 
   void _scanBarcode() async {
     try {
       String barcode = await FlutterBarcodeScanner.scanBarcode(
           "#ff6666", "Cancel", true, ScanMode.BARCODE);
-      if (barcode != null) {
+      if (barcode != "-1") {
         var csvContent = await File(_csvFilePath).readAsString();
         var lines = csvContent.split('\n');
         for (var line in lines) {
-          var values = line.split(',');
-          if (values[0] == barcode) {
+          var values = line.split(';');
+          if (values[0].trim() == barcode.trim()) {
             setState(() {
               _scannedBarcodes.add({'barcode': barcode, 'result': 'Found'});
             });
@@ -64,13 +84,14 @@ class _MyAppState extends State<MyApp> {
 
   void _selectCsvFile() async {
     try {
-      var file = await FilePicker.platform.pickFiles(
+      final file = await FilePicker.platform.pickFiles(
         type: FileType.custom,
         allowedExtensions: ['csv'],
       );
       setState(() {
         _csvFilePath = file!.files.first.path!;
       });
+      await _saveCsvFilePath(_csvFilePath);
     } catch (e) {
       print(e);
     }
@@ -120,6 +141,8 @@ class _MyAppState extends State<MyApp> {
       ),
     );
   }
+
+  join(String databasesPath, String s) {}
 }
 
 class SelectCsvScreen extends StatelessWidget {
