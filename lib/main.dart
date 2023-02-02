@@ -68,7 +68,8 @@ class _MyAppState extends State<MyApp> {
           var values = line.split(';');
           if (values[0].trim() == barcode.trim()) {
             setState(() {
-              _scannedBarcodes.add({'barcode': barcode, 'result': 'Found'});
+              _scannedBarcodes.add(
+                  {'barcode': barcode, 'result': 'Found', 'name': values[1]});
             });
             return;
           }
@@ -141,8 +142,6 @@ class _MyAppState extends State<MyApp> {
       ),
     );
   }
-
-  join(String databasesPath, String s) {}
 }
 
 class SelectCsvScreen extends StatelessWidget {
@@ -182,7 +181,14 @@ class ResultScreen extends StatelessWidget {
         itemBuilder: (BuildContext context, int index) {
           return ListTile(
             title: Text(scannedBarcodes[index]['barcode']!),
-            subtitle: Text(scannedBarcodes[index]['result']!),
+            subtitle: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: <Widget>[
+                Text(scannedBarcodes[index]['result']!),
+                const SizedBox(height: 5),
+                Text(scannedBarcodes[index]['name']!),
+              ],
+            ),
           );
         });
   }
