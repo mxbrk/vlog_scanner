@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_barcode_scanner/flutter_barcode_scanner.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'const.dart';
 
 void main() => runApp(const MyApp());
 
@@ -14,23 +15,6 @@ class MyApp extends StatefulWidget {
   @override
   // ignore: library_private_types_in_public_api
   _MyAppState createState() => _MyAppState();
-}
-
-class ScanScreen extends StatelessWidget {
-  final Function() onScan;
-
-  // ignore: use_key_in_widget_constructors
-  const ScanScreen({required this.onScan});
-
-  @override
-  Widget build(BuildContext context) {
-    return Center(
-      child: ElevatedButton(
-        onPressed: onScan,
-        child: const Text('Scan'),
-      ),
-    );
-  }
 }
 
 class _MyAppState extends State<MyApp> {
@@ -124,6 +108,7 @@ class _MyAppState extends State<MyApp> {
               _selectedIndex = index;
             });
           },
+          selectedItemColor: vlogGreen,
           items: const <BottomNavigationBarItem>[
             BottomNavigationBarItem(
               icon: Icon(Icons.camera_alt),
@@ -144,6 +129,26 @@ class _MyAppState extends State<MyApp> {
   }
 }
 
+class ScanScreen extends StatelessWidget {
+  final Function() onScan;
+
+  // ignore: use_key_in_widget_constructors
+  const ScanScreen({required this.onScan});
+
+  @override
+  Widget build(BuildContext context) {
+    return Center(
+      child: ElevatedButton(
+        onPressed: onScan,
+        child: const Text('Scan'),
+        style: ButtonStyle(
+          backgroundColor: MaterialStateProperty.all<Color>(vlogGreen),
+        ),
+      ),
+    );
+  }
+}
+
 class SelectCsvScreen extends StatelessWidget {
   final void Function() onSelect;
   final String filePath;
@@ -152,11 +157,18 @@ class SelectCsvScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Column(
+      mainAxisAlignment:
+          MainAxisAlignment.center, // Zentrieren der Column vertikal
       children: <Widget>[
-        Center(
+        Container(
+          margin: const EdgeInsets.symmetric(horizontal: 16),
+          alignment: Alignment.center,
           child: ElevatedButton(
             onPressed: onSelect,
             child: const Text('Select CSV File'),
+            style: ButtonStyle(
+              backgroundColor: MaterialStateProperty.all<Color>(vlogGreen),
+            ),
           ),
         ),
         filePath == null || filePath.isEmpty
