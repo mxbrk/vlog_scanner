@@ -52,14 +52,23 @@ class _MyAppState extends State<MyApp> {
           var values = line.split(';');
           if (values[0].trim() == barcode.trim()) {
             setState(() {
-              _scannedBarcodes.add(
-                  {'barcode': barcode, 'result': 'Found', 'name': values[1]});
+              _scannedBarcodes.add({
+                'barcode': barcode,
+                'resultText': 'Barcode ist in der CSV-Datei vorhanden',
+                'result': 'true',
+                'name': values[1]
+              });
             });
             return;
           }
         }
         setState(() {
-          _scannedBarcodes.add({'barcode': barcode, 'result': 'Not found'});
+          _scannedBarcodes.add({
+            'barcode': barcode,
+            'result': 'false',
+            'resultText': 'Not found',
+            'name': ''
+          });
         });
       }
     } catch (e) {
@@ -184,24 +193,32 @@ class SelectCsvScreen extends StatelessWidget {
 class ResultScreen extends StatelessWidget {
   final List<Map<String, String>> scannedBarcodes;
 
-  const ResultScreen({super.key, required this.scannedBarcodes});
+  const ResultScreen({Key? key, required this.scannedBarcodes})
+      : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    return ListView.builder(
-        itemCount: scannedBarcodes.length,
-        itemBuilder: (BuildContext context, int index) {
-          return ListTile(
-            title: Text(scannedBarcodes[index]['barcode']!),
-            subtitle: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: <Widget>[
-                Text(scannedBarcodes[index]['result']!),
-                const SizedBox(height: 5),
-                Text(scannedBarcodes[index]['name']!),
-              ],
-            ),
-          );
-        });
+    return Center(
+      child: ListView.builder(
+          itemCount: scannedBarcodes.length,
+          itemBuilder: (BuildContext context, int index) {
+            return ListTile(
+              title: Text(scannedBarcodes[index]['barcode']!,
+                  style: TextStyle(
+                    color: scannedBarcodes[index]['result'] == 'true'
+                        ? Colors.green
+                        : Colors.red,
+                  )),
+              subtitle: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: <Widget>[
+                  Text(scannedBarcodes[index]['resultText']!),
+                  const SizedBox(height: 5),
+                  Text(scannedBarcodes[index]['name']!),
+                ],
+              ),
+            );
+          }),
+    );
   }
 }
