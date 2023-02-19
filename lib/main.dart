@@ -7,6 +7,7 @@ import 'package:file_picker/file_picker.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'const.dart';
 
+//begin app
 void main() => runApp(const MyApp());
 
 class MyApp extends StatefulWidget {
