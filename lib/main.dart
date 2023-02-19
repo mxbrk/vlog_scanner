@@ -191,12 +191,14 @@ class SelectCsvScreen extends StatelessWidget {
   }
 }
 
+//result screen definition
 class ResultScreen extends StatelessWidget {
   final List<Map<String, String>> scannedBarcodes;
 
   const ResultScreen({Key? key, required this.scannedBarcodes})
       : super(key: key);
 
+  //result widget
   @override
   Widget build(BuildContext context) {
     return Center(
