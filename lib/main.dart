@@ -22,6 +22,7 @@ class _MyAppState extends State<MyApp> {
   int _selectedIndex = 0;
   String _csvFilePath = "";
 
+  //loading the csv file
   Future<void> _loadCsvFilePath() async {
     final prefs = await SharedPreferences.getInstance();
     setState(() {
@@ -29,6 +30,7 @@ class _MyAppState extends State<MyApp> {
     });
   }
 
+  //saving the csv filepath
   Future<void> _saveCsvFilePath(String path) async {
     final prefs = await SharedPreferences.getInstance();
     await prefs.setString('csvFilePath', path);
@@ -42,6 +44,7 @@ class _MyAppState extends State<MyApp> {
 
   final List<Map<String, String>> _scannedBarcodes = [];
 
+  //function for scanning a barcode and check against the selected csv
   void _scanBarcode() async {
     try {
       String barcode = await FlutterBarcodeScanner.scanBarcode(
@@ -77,6 +80,7 @@ class _MyAppState extends State<MyApp> {
     }
   }
 
+  //functionn for selecting the csv file
   void _selectCsvFile() async {
     try {
       final file = await FilePicker.platform.pickFiles(
@@ -139,6 +143,7 @@ class _MyAppState extends State<MyApp> {
   }
 }
 
+//scan screen
 class ScanScreen extends StatelessWidget {
   final Function() onScan;
 
@@ -159,6 +164,7 @@ class ScanScreen extends StatelessWidget {
   }
 }
 
+//select CSV-screen
 class SelectCsvScreen extends StatelessWidget {
   final void Function() onSelect;
   final String filePath;
