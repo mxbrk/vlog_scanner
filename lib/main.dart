@@ -212,7 +212,20 @@ class SelectCsvScreen extends StatelessWidget {
         filePath == null || filePath.isEmpty
             ? Container()
             : Center(
-                child: Text("Selected file: $filePath"),
+                child: RichText(
+                  text: TextSpan(
+                    style: const TextStyle(fontSize: 16.0, color: Colors.black),
+                    children: [
+                      const TextSpan(
+                        text: '\nSelected file:\n',
+                        style: TextStyle(fontWeight: FontWeight.bold),
+                      ),
+                      TextSpan(
+                        text: filePath,
+                      ),
+                    ],
+                  ),
+                ),
               ),
       ],
     );
