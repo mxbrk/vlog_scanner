@@ -1,11 +1,11 @@
 // ignore_for_file: avoid_print, unnecessary_null_comparison
-
-import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_barcode_scanner/flutter_barcode_scanner.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'const.dart';
+import 'dart:io';
+import 'package:path_provider/path_provider.dart';
 
 //begin app
 void main() => runApp(const MyApp());
@@ -30,7 +30,7 @@ class _MyAppState extends State<MyApp> {
     });
   }
 
-  //saving the csv filepath
+  //saving the csv-select filepath
   Future<void> _saveCsvFilePath(String path) async {
     final prefs = await SharedPreferences.getInstance();
     await prefs.setString('csvFilePath', path);
@@ -155,10 +155,21 @@ class ScanScreen extends StatelessWidget {
     return Center(
       child: ElevatedButton(
         onPressed: onScan,
-        child: const Text('Scan'),
         style: ButtonStyle(
           backgroundColor: MaterialStateProperty.all<Color>(vlogGreen),
+          shape: MaterialStateProperty.all<RoundedRectangleBorder>(
+            RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(200.0),
+            ),
+          ),
+          fixedSize: MaterialStateProperty.all<Size>(
+            const Size(200, 200),
+          ),
         ),
+        child: const Text('Scan',
+            style: TextStyle(
+              fontSize: 28.0,
+            )),
       ),
     );
   }
@@ -181,10 +192,21 @@ class SelectCsvScreen extends StatelessWidget {
           alignment: Alignment.center,
           child: ElevatedButton(
             onPressed: onSelect,
-            child: const Text('Select CSV File'),
             style: ButtonStyle(
               backgroundColor: MaterialStateProperty.all<Color>(vlogGreen),
+              shape: MaterialStateProperty.all<RoundedRectangleBorder>(
+                RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(30.0),
+                ),
+              ),
+              fixedSize: MaterialStateProperty.all<Size>(
+                const Size(200, 40),
+              ),
             ),
+            child: const Text('Select a CSV file',
+                style: TextStyle(
+                  fontSize: 18.0,
+                )),
           ),
         ),
         filePath == null || filePath.isEmpty
