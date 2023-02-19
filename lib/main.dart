@@ -5,7 +5,6 @@ import 'package:file_picker/file_picker.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'const.dart';
 import 'dart:io';
-import 'package:path_provider/path_provider.dart';
 
 //begin app
 void main() => runApp(const MyApp());
