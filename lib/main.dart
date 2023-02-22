@@ -27,7 +27,8 @@ class _MyAppState extends State<MyApp> {
 
   Future<Database> _openDB() async {
     Directory documentsDirectory = await getApplicationDocumentsDirectory();
-    String path = join(documentsDirectory.path, 'barcodes.db');
+    String path = join(
+        documentsDirectory.path, 'barcodes.db'); // maybe changing the path here
 
     return await openDatabase(
       path,
