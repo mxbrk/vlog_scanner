@@ -8,7 +8,6 @@ import 'dart:io';
 import 'package:csv/csv.dart';
 import 'package:path_provider/path_provider.dart';
 
-//test
 //begin app
 void main() => runApp(const MyApp());
 
@@ -294,23 +293,10 @@ class ResultScreen extends StatelessWidget {
   //result widget
   @override
   Widget build(BuildContext context) {
-    return Center(
-      child: Column(
+    return Scaffold(
+      body: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          ElevatedButton(
-            onPressed: () {
-              {
-                if (result != null) {
-                  exportToCsv();
-                }
-              }
-            },
-            //FIX THIS!!! --> man sagt bitte
-
-            child: const Text('Export to CSV'),
-          ),
-          const SizedBox(height: 16),
           Expanded(
             child: ListView.builder(
               itemCount: result.scannedBarcodes.length,
@@ -334,6 +320,27 @@ class ResultScreen extends StatelessWidget {
               },
             ),
           ),
+          Padding(
+            padding: const EdgeInsets.only(bottom: 2, left: 16, right: 16),
+            child: ElevatedButton(
+              onPressed: () {
+                if (result != null) {
+                  //FIX THIS!!! --> man sagt bitte
+                  exportToCsv();
+                }
+              },
+              style: ButtonStyle(
+                backgroundColor: MaterialStateProperty.all<Color>(vlogGreen),
+                shape: MaterialStateProperty.all<RoundedRectangleBorder>(
+                  RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(30.0),
+                  ),
+                ),
+              ),
+              child: const Text('Export to CSV'),
+            ),
+          ),
+          const SizedBox(height: 16),
         ],
       ),
     );
