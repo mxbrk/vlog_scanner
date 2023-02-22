@@ -112,9 +112,8 @@ class _MyAppState extends State<MyApp> {
               filePath: _csvFilePath,
             ),
             ResultScreen(
-              scannedBarcodes: _scannedBarcodes,
-              result: Result(scannedBarcodes: _scannedBarcodes)
-            ),
+                scannedBarcodes: _scannedBarcodes,
+                result: Result(_scannedBarcodes)),
           ],
         ),
         bottomNavigationBar: BottomNavigationBar(
@@ -187,7 +186,7 @@ class SelectCsvScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Column(
       mainAxisAlignment:
-      MainAxisAlignment.center, // Zentrieren der Column vertikal
+          MainAxisAlignment.center, // Zentrieren der Column vertikal
       children: <Widget>[
         Container(
           margin: const EdgeInsets.symmetric(horizontal: 16),
@@ -214,22 +213,22 @@ class SelectCsvScreen extends StatelessWidget {
         filePath == null || filePath.isEmpty
             ? Container()
             : Center(
-          child: RichText(
-            textAlign: TextAlign.center,
-            text: TextSpan(
-              style: const TextStyle(fontSize: 16.0, color: Colors.black),
-              children: [
-                const TextSpan(
-                  text: '\nSelected file:\n',
-                  style: TextStyle(fontWeight: FontWeight.bold),
+                child: RichText(
+                  textAlign: TextAlign.center,
+                  text: TextSpan(
+                    style: const TextStyle(fontSize: 16.0, color: Colors.black),
+                    children: [
+                      const TextSpan(
+                        text: '\nSelected file:\n',
+                        style: TextStyle(fontWeight: FontWeight.bold),
+                      ),
+                      TextSpan(
+                        text: filePath,
+                      ),
+                    ],
+                  ),
                 ),
-                TextSpan(
-                  text: filePath,
-                ),
-              ],
-            ),
-          ),
-        ),
+              ),
       ],
     );
   }
@@ -249,11 +248,30 @@ class Result {
 
     //add rows to data
     for (var barcode in scannedBarcodes) {
-      data.add([
-        barcode['barcode'],
-        barcode['name'],
-        barcode['result']
-      ]);
+      data.add([barcode['barcode'], barcode['name'], barcode['result']]);
+    }
+
+    return data;
+  }
+}
+
+//result screen definition
+class ResultScreen extends StatelessWidget {
+  final List<Map<String, String>> scannedBarcodes;
+  final Result result;
+
+  const ResultScreen(
+      {Key? key, required this.scannedBarcodes, required this.result})
+      : super(key: key);
+  List<List<dynamic>> get csvData {
+    List<List<dynamic>> data = [];
+
+    //add headers to data
+    data.add(["Barcode", "Name", "Result"]);
+
+    //add rows to data
+    for (var barcode in scannedBarcodes) {
+      data.add([barcode['barcode'], barcode['name'], barcode['result']]);
     }
 
     return data;
@@ -272,19 +290,6 @@ class Result {
     String csv = const ListToCsvConverter().convert(csvData);
     await file.writeAsString(csv);
   }
-}
-
-//result screen definition
-class ResultScreen extends StatelessWidget {
-  final List<Map<String, String>> scannedBarcodes;
-  final Result result;
-
-  const ResultScreen({Key? key, required this.scannedBarcodes, required this.result})
-      : super(key: key);
-
-  if (result != null) {
-  result.export();
-  }
 
   //result widget
   @override
@@ -295,9 +300,16 @@ class ResultScreen extends StatelessWidget {
         children: [
           ElevatedButton(
             onPressed: () {
-              result.exportToCsv();
+              exportToCsv();
             },
-            child: Text('Export to CSV'),
+            //FIX THIS!!! --> man sagt bitte
+            /*{
+  if (result != null) {
+    exportToCsv();
+  }
+},
+*/
+            child: const Text('Export to CSV'),
           ),
           const SizedBox(height: 16),
           Expanded(
