@@ -282,6 +282,7 @@ class ResultScreen extends StatelessWidget {
   const ResultScreen({Key? key, required this.scannedBarcodes, required this.result})
       : super(key: key);
 
+  //FIX THIS!!!
   if (result != null) {
   result.export();
   }
