@@ -5,6 +5,8 @@ import 'package:file_picker/file_picker.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'const.dart';
 import 'dart:io';
+import 'package:csv/csv.dart';
+import 'package:path_provider/path_provider.dart';
 
 //begin app
 void main() => runApp(const MyApp());
@@ -111,6 +113,7 @@ class _MyAppState extends State<MyApp> {
             ),
             ResultScreen(
               scannedBarcodes: _scannedBarcodes,
+              result: Result(scannedBarcodes: _scannedBarcodes)
             ),
           ],
         ),
@@ -184,7 +187,7 @@ class SelectCsvScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Column(
       mainAxisAlignment:
-          MainAxisAlignment.center, // Zentrieren der Column vertikal
+      MainAxisAlignment.center, // Zentrieren der Column vertikal
       children: <Widget>[
         Container(
           margin: const EdgeInsets.symmetric(horizontal: 16),
@@ -211,58 +214,117 @@ class SelectCsvScreen extends StatelessWidget {
         filePath == null || filePath.isEmpty
             ? Container()
             : Center(
-                child: RichText(
-                  textAlign: TextAlign.center,
-                  text: TextSpan(
-                    style: const TextStyle(fontSize: 16.0, color: Colors.black),
-                    children: [
-                      const TextSpan(
-                        text: '\nSelected file:\n',
-                        style: TextStyle(fontWeight: FontWeight.bold),
-                      ),
-                      TextSpan(
-                        text: filePath,
-                      ),
-                    ],
-                  ),
+          child: RichText(
+            textAlign: TextAlign.center,
+            text: TextSpan(
+              style: const TextStyle(fontSize: 16.0, color: Colors.black),
+              children: [
+                const TextSpan(
+                  text: '\nSelected file:\n',
+                  style: TextStyle(fontWeight: FontWeight.bold),
                 ),
-              ),
+                TextSpan(
+                  text: filePath,
+                ),
+              ],
+            ),
+          ),
+        ),
       ],
     );
+  }
+}
+
+//result class (barcode -> csv exp)
+class Result {
+  final List<Map<String, String>> scannedBarcodes;
+
+  Result(this.scannedBarcodes);
+
+  List<List<dynamic>> get csvData {
+    List<List<dynamic>> data = [];
+
+    //add headers to data
+    data.add(["Barcode", "Name", "Result"]);
+
+    //add rows to data
+    for (var barcode in scannedBarcodes) {
+      data.add([
+        barcode['barcode'],
+        barcode['name'],
+        barcode['result']
+      ]);
+    }
+
+    return data;
+  }
+
+  //export to csv
+  Future<void> exportToCsv() async {
+    List<List<dynamic>> csvData = this.csvData;
+
+    //get external storage directory
+    Directory? directory = await getExternalStorageDirectory();
+    String filePath = '${directory!.path}/scanned_barcodes.csv';
+
+    //write csv file
+    File file = File(filePath);
+    String csv = const ListToCsvConverter().convert(csvData);
+    await file.writeAsString(csv);
   }
 }
 
 //result screen definition
 class ResultScreen extends StatelessWidget {
   final List<Map<String, String>> scannedBarcodes;
+  final Result result;
 
-  const ResultScreen({Key? key, required this.scannedBarcodes})
+  const ResultScreen({Key? key, required this.scannedBarcodes, required this.result})
       : super(key: key);
+
+  if (result != null) {
+  result.export();
+  }
 
   //result widget
   @override
   Widget build(BuildContext context) {
     return Center(
-      child: ListView.builder(
-          itemCount: scannedBarcodes.length,
-          itemBuilder: (BuildContext context, int index) {
-            return ListTile(
-              title: Text(scannedBarcodes[index]['barcode']!,
-                  style: TextStyle(
-                    color: scannedBarcodes[index]['result'] == 'true'
-                        ? Colors.green
-                        : Colors.red,
-                  )),
-              subtitle: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: <Widget>[
-                  Text(scannedBarcodes[index]['resultText']!),
-                  const SizedBox(height: 5),
-                  Text(scannedBarcodes[index]['name']!),
-                ],
-              ),
-            );
-          }),
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          ElevatedButton(
+            onPressed: () {
+              result.exportToCsv();
+            },
+            child: Text('Export to CSV'),
+          ),
+          const SizedBox(height: 16),
+          Expanded(
+            child: ListView.builder(
+              itemCount: result.scannedBarcodes.length,
+              itemBuilder: (BuildContext context, int index) {
+                return ListTile(
+                  title: Text(result.scannedBarcodes[index]['barcode']!,
+                      style: TextStyle(
+                        color: result.scannedBarcodes[index]['result'] == 'true'
+                            ? Colors.green
+                            : Colors.red,
+                      )),
+                  subtitle: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: <Widget>[
+                      Text(result.scannedBarcodes[index]['resultText']!),
+                      const SizedBox(height: 5),
+                      Text(result.scannedBarcodes[index]['name']!),
+                    ],
+                  ),
+                );
+              },
+            ),
+          ),
+        ],
+      ),
     );
   }
 }
