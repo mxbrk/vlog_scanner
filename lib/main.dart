@@ -7,7 +7,9 @@ import 'const.dart';
 import 'dart:io';
 import 'package:csv/csv.dart';
 import 'package:path_provider/path_provider.dart';
-// BRANCH TEST TEST
+import 'package:sqflite/sqflite.dart';
+import 'package:path/path.dart';
+
 //begin app
 void main() => runApp(const MyApp());
 
@@ -22,6 +24,20 @@ class MyApp extends StatefulWidget {
 class _MyAppState extends State<MyApp> {
   int _selectedIndex = 0;
   String _csvFilePath = "";
+
+  Future<Database> _openDB() async {
+    Directory documentsDirectory = await getApplicationDocumentsDirectory();
+    String path = join(documentsDirectory.path, 'barcodes.db');
+
+    return await openDatabase(
+      path,
+      version: 1,
+      onCreate: (db, version) async {
+        await db.execute(
+            'CREATE TABLE Barcodes (id INTEGER PRIMARY KEY, barcode TEXT, resultText TEXT, result INTEGER, name TEXT)');
+      },
+    );
+  }
 
   //loading the csv file
   Future<void> _loadCsvFilePath() async {
@@ -56,6 +72,13 @@ class _MyAppState extends State<MyApp> {
         for (var line in lines) {
           var values = line.split(';');
           if (values[0].trim() == barcode.trim()) {
+            final db = await _openDB();
+            await db.insert('Barcodes', {
+              'barcode': barcode,
+              'resultText': 'Barcode ist in der CSV-Datei vorhanden',
+              'result': 1,
+              'name': values[1]
+            });
             setState(() {
               _scannedBarcodes.add({
                 'barcode': barcode,
@@ -67,6 +90,13 @@ class _MyAppState extends State<MyApp> {
             return;
           }
         }
+        final db = await _openDB();
+        await db.insert('Barcodes', {
+          'barcode': barcode,
+          'resultText': 'Not found',
+          'result': 0,
+          'name': ''
+        });
         setState(() {
           _scannedBarcodes.add({
             'barcode': barcode,
