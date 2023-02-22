@@ -250,7 +250,6 @@ class Result {
     for (var barcode in scannedBarcodes) {
       data.add([barcode['barcode'], barcode['name'], barcode['result']]);
     }
-
     return data;
   }
 }
@@ -300,15 +299,14 @@ class ResultScreen extends StatelessWidget {
         children: [
           ElevatedButton(
             onPressed: () {
-              exportToCsv();
+              {
+                if (result != null) {
+                  exportToCsv();
+                }
+              }
             },
             //FIX THIS!!! --> man sagt bitte
-            /*{
-  if (result != null) {
-    exportToCsv();
-  }
-},
-*/
+
             child: const Text('Export to CSV'),
           ),
           const SizedBox(height: 16),
